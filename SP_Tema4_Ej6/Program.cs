@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO.IsolatedStorage;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace SP_Tema4_Ej6
@@ -21,7 +22,7 @@ namespace SP_Tema4_Ej6
         private static bool finished = false;
         private static Random rand = new Random();
         static object l = new object();
-
+        static object m = new object();
         public static void initialize()
         {
             Console.SetCursorPosition(1, 1);
@@ -38,7 +39,6 @@ namespace SP_Tema4_Ej6
 
         static void Main(string[] args)
         {
-            Console.ForegroundColor = ConsoleColor.White;
             Thread player1 = new Thread(playerOne);
             Thread player2 = new Thread(playerTwo);
             Thread display = new Thread(displayQueer);
@@ -50,15 +50,16 @@ namespace SP_Tema4_Ej6
             player1.Start();
             player2.Start();
 
-            while (!finished)
+            lock (m)
             {
-
+                Monitor.Wait(m);
             }
-            /*
+
+            
             Console.SetCursorPosition(1,20);
-                                                                        <= ESTO NO VA
+                                                                        
             Console.WriteLine("Enter to continue...");
-            */
+            
             Console.ReadLine();
             Console.Clear();
             Console.SetCursorPosition(0, 1);
@@ -66,6 +67,8 @@ namespace SP_Tema4_Ej6
             Console.WriteLine(winner);
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("FINISH HIM!");
+
+            Console.ForegroundColor = ConsoleColor.White;
             Console.ReadLine();
         }
 
@@ -102,9 +105,13 @@ namespace SP_Tema4_Ej6
 
                         Console.SetCursorPosition(30, 1);
                         Console.WriteLine(String.Format("Match: {0,3}", cont));
-                        Thread.Sleep(100 * theThrow);
                     }
                 }
+                        Thread.Sleep(100 * theThrow);
+            }
+            lock (m)
+            {
+                Monitor.Pulse(m);
             }
         }
 
@@ -139,9 +146,13 @@ namespace SP_Tema4_Ej6
 
                         Console.SetCursorPosition(30, 1);
                         Console.WriteLine(String.Format("Match: {0,3}", cont));
-                        Thread.Sleep(100 * theThrow);
                     }
                 }
+                        Thread.Sleep(100 * theThrow);
+            }
+            lock (m)
+            {
+                Monitor.Pulse(m);
             }
         }
 
@@ -166,9 +177,9 @@ namespace SP_Tema4_Ej6
 
                         Console.SetCursorPosition(30, 10);
                         Console.WriteLine(queer[index]);
-                        Thread.Sleep(200);
                     }
                 }
+                        Thread.Sleep(200);
 
             }
         }
